@@ -80,6 +80,24 @@ Every 20 minutes, so a new bounty is seen while its claim count is still zero:
 */20 * * * * cd /opt/poidh-radar && POIDH_RADAR_TG_TOKEN=... POIDH_RADAR_TG_CHAT=... /usr/bin/node bin/radar.js >> /var/log/poidh-radar.log 2>&1
 ```
 
+### On a server without Node
+
+Docker is enough — no system Node install, and the runtime stays pinned:
+
+```bash
+git clone https://github.com/uShure/poidh-radar.git /opt/poidh-radar
+
+printf 'POIDH_RADAR_TG_TOKEN=%s\nPOIDH_RADAR_TG_CHAT=%s\nPOIDH_RADAR_STATE=%s\n' \
+  '<bot-token>' '<chat-id>' '/opt/poidh-radar/state.json' > /etc/poidh-radar.env
+chmod 600 /etc/poidh-radar.env
+
+cat >> /etc/crontab <<'CRON'
+*/20 * * * * root docker run --rm --env-file /etc/poidh-radar.env -v /opt/poidh-radar:/app -w /app node:22-alpine node bin/radar.js >> /var/log/poidh-radar.log 2>&1
+CRON
+```
+
+Keep the token in `/etc/poidh-radar.env` with mode 600 rather than inline in the crontab, where every user on the box can read it.
+
 ## Scoring
 
 ```
