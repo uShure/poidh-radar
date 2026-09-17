@@ -22,8 +22,11 @@ fi
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 
+# The state path is the path *inside* the container: /app is the mounted
+# checkout, so the file survives; a host path would be written into the
+# container's own filesystem and vanish with --rm.
 printf 'POIDH_RADAR_TG_TOKEN=%s\nPOIDH_RADAR_TG_CHAT=%s\nPOIDH_RADAR_STATE=%s\n' \
-  "$TOKEN" "$CHAT" "$APP_DIR/state.json" > "$ENV_FILE"
+  "$TOKEN" "$CHAT" "/app/state.json" > "$ENV_FILE"
 chmod 600 "$ENV_FILE"
 echo "wrote $ENV_FILE (mode 600)"
 

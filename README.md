@@ -58,7 +58,7 @@ node bin/radar.js --dry-run --all --json
 | `--show-rejected` | also print what was filtered out and why |
 | `--include-irl` | keep bounties that need physical presence |
 | `--include-stale` | keep bounties open for more than 120 days |
-| `--state=PATH` | state file (default `~/.poidh-radar/state.json`) |
+| `--state=PATH` | state file (default `./state.json`) |
 
 ## Telegram
 

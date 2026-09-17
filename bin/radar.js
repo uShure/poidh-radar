@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 // poidh-radar — find poidh bounties worth attempting, and say so once.
 
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { fetchBounties } from '../src/poidh.js';
 import { evaluate, SKIP_BY_DEFAULT } from '../src/score.js';
 import { loadState, saveState, isNew, markSeen } from '../src/state.js';
 import { formatBounty, sendTelegram, hasCredentials } from '../src/notify.js';
 
-const DEFAULT_STATE = process.env.POIDH_RADAR_STATE ?? join(homedir(), '.poidh-radar', 'state.json');
+// Default next to the checkout rather than in $HOME: inside a container the
+// home directory is discarded with the container, while the working directory
+// is the mounted volume that actually survives the run.
+const DEFAULT_STATE = process.env.POIDH_RADAR_STATE ?? join(process.cwd(), 'state.json');
 
 function parseArgs(argv) {
   const opts = {
@@ -63,7 +65,7 @@ usage: poidh-radar [options]
   --show-rejected    also print what was filtered out and why
   --include-irl      keep bounties that need physical presence
   --include-stale    keep bounties open for more than 120 days
-  --state=PATH       state file (default ~/.poidh-radar/state.json)
+  --state=PATH       state file (default ./state.json)
 
 Telegram delivery needs POIDH_RADAR_TG_TOKEN and POIDH_RADAR_TG_CHAT.
 `;
